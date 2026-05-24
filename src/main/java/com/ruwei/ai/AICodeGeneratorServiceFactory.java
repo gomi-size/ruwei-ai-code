@@ -1,0 +1,24 @@
+package com.ruwei.ai;
+
+import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.service.AiServices;
+import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * ai服务创建工厂
+ */
+@Configuration
+public class AICodeGeneratorServiceFactory {
+
+    @Resource
+    private ChatModel chatModel;
+
+    @Bean
+    public AICodeGeneratorService createAICodeGeneratorService() {
+        return AiServices.create(AICodeGeneratorService.class, chatModel);
+    }
+
+
+}
