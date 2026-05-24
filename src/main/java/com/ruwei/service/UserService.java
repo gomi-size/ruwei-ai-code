@@ -1,9 +1,14 @@
 package com.ruwei.service;
 
+import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.service.IService;
+import com.ruwei.model.dto.UserQueryRequest;
 import com.ruwei.model.entity.User;
 import com.ruwei.model.vo.LoginUserVO;
+import com.ruwei.model.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.List;
 
 
 /**
@@ -51,4 +56,12 @@ public interface UserService extends IService<User> {
      */
     boolean userLogout(HttpServletRequest request);
 
+
+    QueryWrapper getQueryWrapper(UserQueryRequest userQueryRequest);
+
+    UserVO getUserVO(User user);
+
+    List<UserVO> getUserVOList(List<User> userList);
+
+    String getEncryptPassword(String defaultPassword);
 }
