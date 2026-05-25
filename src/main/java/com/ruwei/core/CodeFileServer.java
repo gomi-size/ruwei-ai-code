@@ -11,6 +11,7 @@ import java.io.File;
 /**
  * 文件保存器
  */
+@Deprecated
 public class CodeFileServer {
 
     //文件保存的根目录

@@ -29,6 +29,4 @@ public class AICodeGeneratorServiceFactory {
                 .chatModel(chatModel)
                 .streamingChatModel(streamingChatModel).build();
     }
-
-
 }
