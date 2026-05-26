@@ -23,11 +23,11 @@ public abstract class CodeFileSaveTemplate<T> {
      * @param result
      * @return
      */
-    public final File saveCode(T result){
+    public final File saveCode(T result,Long appId){
         //1.验证输入
         validateInput(result);
         //2.构建唯一路径
-        String uniqueDir = buildUniqueDir();
+        String uniqueDir = buildUniqueDir(appId);
         //3.保存文件（子类实现）
         saveFiles(result,uniqueDir);
         //4.返回文件目录
@@ -52,11 +52,13 @@ public abstract class CodeFileSaveTemplate<T> {
     /**
      * 构建文件的唯一路径:tmp/code_output/bizType_雪花算法ID
      * 其实就是生成文件夹
+     * @param appId appID
      * @return
      */
-    private  String buildUniqueDir( ){
+    private  String buildUniqueDir(Long appId ){
+        ThrowUtils.throwIf(appId==null,ErrorCode.PARAMS_ERROR,"appId不能为空");
         String value = getCodeType().getValue();
-        String uniqueDirName=FILE_SAVE_ROOT_DIR+"/"+value+"_"+ IdUtil.getSnowflakeNextIdStr();
+        String uniqueDirName=FILE_SAVE_ROOT_DIR+"/"+value+"_"+ appId;
         FileUtil.mkdir(uniqueDirName);
         return uniqueDirName;
     }
