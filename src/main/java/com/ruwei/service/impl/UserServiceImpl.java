@@ -9,7 +9,7 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.ruwei.exception.BusinessException;
 import com.ruwei.exception.ErrorCode;
 import com.ruwei.exception.ThrowUtils;
-import com.ruwei.model.dto.UserQueryRequest;
+import com.ruwei.model.dto.user.UserQueryRequest;
 import com.ruwei.model.entity.User;
 import com.ruwei.model.enums.UserRoleEnum;
 import com.ruwei.model.vo.LoginUserVO;
@@ -128,7 +128,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Object attribute = request.getSession().getAttribute(USER_LOGIN_STATE);
 
         User currentUser = (User) attribute;
-        ThrowUtils.throwIf(currentUser ==null|| currentUser.getId()==null,ErrorCode.NOT_LOGIN_ERROR,"用户为登录");
+        ThrowUtils.throwIf(currentUser ==null|| currentUser.getId()==null,ErrorCode.NOT_LOGIN_ERROR,"用户未登录");
 
         //从数据库查询当前信息
         User user = getById(currentUser.getId());

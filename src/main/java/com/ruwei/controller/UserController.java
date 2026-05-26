@@ -1,7 +1,6 @@
 package com.ruwei.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
 import com.mybatisflex.core.paginate.Page;
 import com.ruwei.annotation.AuthCheck;
 import com.ruwei.common.BaseResponse;
@@ -11,20 +10,19 @@ import com.ruwei.constant.UserConstant;
 import com.ruwei.exception.BusinessException;
 import com.ruwei.exception.ErrorCode;
 import com.ruwei.exception.ThrowUtils;
-import com.ruwei.model.dto.*;
+import com.ruwei.model.dto.user.*;
 import com.ruwei.model.entity.User;
 import com.ruwei.model.vo.LoginUserVO;
 import com.ruwei.model.vo.UserVO;
 import com.ruwei.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.catalina.util.RequestUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/user")
 public class UserController {
     @Resource
     private UserService userService;

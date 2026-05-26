@@ -2,7 +2,7 @@ package com.ruwei.service;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.service.IService;
-import com.ruwei.model.dto.UserQueryRequest;
+import com.ruwei.model.dto.user.UserQueryRequest;
 import com.ruwei.model.entity.User;
 import com.ruwei.model.vo.LoginUserVO;
 import com.ruwei.model.vo.UserVO;
