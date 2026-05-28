@@ -9,13 +9,15 @@ import com.ruwei.model.enums.CodeGenTypeEnum;
 
 import java.io.File;
 
+import static com.ruwei.constant.AppConstant.CODE_OUTPUT_ROOT_DIR;
+
 /**
  * 抽象代码文件保存器-模板方法
  */
 public abstract class CodeFileSaveTemplate<T> {
 
     //文件保存的根目录
-    private static final String FILE_SAVE_ROOT_DIR= System.getProperty("user.dir")+"/tmp/code_output";
+    private static final String FILE_SAVE_ROOT_DIR= CODE_OUTPUT_ROOT_DIR;
 
 
     /**

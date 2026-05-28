@@ -16,7 +16,7 @@ public  class MutiFileCodeFileSaveTemplate extends CodeFileSaveTemplate<MultiFil
 
     @Override
     protected CodeGenTypeEnum getCodeType() {
-        return CodeGenTypeEnum.HTML;
+        return CodeGenTypeEnum.MULTI_FILE;
     }
 
     @Override
