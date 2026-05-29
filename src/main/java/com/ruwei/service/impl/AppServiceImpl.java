@@ -79,7 +79,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
 
         //5.在ai前先保存，先保存用户消息
         chatHistoryService.addChatMessage(appId,message, ChatHistoryMessageTypeEnum.USER.getValue(),loginUser.getId());
-        //6.调用AI生成代码(流式)
+        //6.调用AI生成代码(流式，这里我们使用流式，不使用普通的)
         Flux<String> stringFlux = aiCodeGeneratorFacade.generateAndSaveCodeStream(message, enumByValue, appId);
 
         StringBuilder aiStringBuilder = new StringBuilder();

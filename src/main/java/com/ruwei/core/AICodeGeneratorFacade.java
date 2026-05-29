@@ -1,6 +1,7 @@
 package com.ruwei.core;
 
 import com.ruwei.ai.AICodeGeneratorService;
+import com.ruwei.ai.AICodeGeneratorServiceFactory;
 import com.ruwei.ai.model.HtmlCodeResult;
 import com.ruwei.ai.model.MultiFileCodeResult;
 import com.ruwei.core.parser.CodeParserExecutor;
@@ -26,7 +27,7 @@ public class AICodeGeneratorFacade {
 
     private static final Logger log = LoggerFactory.getLogger(AICodeGeneratorFacade.class);
     @Resource
-    private AICodeGeneratorService aiCodeGeneratorService;
+    private AICodeGeneratorServiceFactory aiCodeGeneratorServiceFactory;
 
     /**
      * 统一入口：根据类型生成并保存代码
@@ -37,7 +38,8 @@ public class AICodeGeneratorFacade {
      */
     public File generateAndSaveCode(String userMessage, CodeGenTypeEnum codeGenType,Long appId)  {
         ThrowUtils.throwIf(codeGenType==null, ErrorCode.PARAMS_ERROR,"生成类型不能为空");
-
+        //根据appId获取相应的ai实例
+        AICodeGeneratorService aiCodeGeneratorService = aiCodeGeneratorServiceFactory.getAICodeGeneratorService(appId);
         return switch (codeGenType) {
             case HTML -> {
                 HtmlCodeResult htmlCodeResult = aiCodeGeneratorService.generateHtmlCode(userMessage);
@@ -68,7 +70,8 @@ public class AICodeGeneratorFacade {
      */
     public Flux<String> generateAndSaveCodeStream(String userMessage, CodeGenTypeEnum codeGenType,Long appId)  {
         ThrowUtils.throwIf(codeGenType==null, ErrorCode.PARAMS_ERROR,"生成类型不能为空");
-
+        //根据appId获取相应的ai实例
+        AICodeGeneratorService aiCodeGeneratorService = aiCodeGeneratorServiceFactory.getAICodeGeneratorService(appId);
         return switch (codeGenType) {
             case HTML -> {
                 Flux<String> stringFlux = aiCodeGeneratorService.generateHtmlCodeStream(userMessage);

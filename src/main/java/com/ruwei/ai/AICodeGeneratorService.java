@@ -12,7 +12,6 @@ public interface AICodeGeneratorService {
      * @param userMessage 用户提示词
      * @return AI输出结果
      */
-
     @SystemMessage(fromResource = "prompt/aa.txt")
     HtmlCodeResult generateHtmlCode(String userMessage);
 

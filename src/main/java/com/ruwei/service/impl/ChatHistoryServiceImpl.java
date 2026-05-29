@@ -15,17 +15,23 @@ import com.ruwei.model.entity.User;
 import com.ruwei.model.enums.ChatHistoryMessageTypeEnum;
 import com.ruwei.service.AppService;
 import com.ruwei.service.ChatHistoryService;
+import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 对话历史 服务层实现。
  *
  * @author <a href="https://github.com/gomi-size">入围</a>
  */
+@Slf4j
 @Service
 public class ChatHistoryServiceImpl extends ServiceImpl<ChatHistoryMapper, ChatHistory>  implements ChatHistoryService{
 
@@ -34,6 +40,14 @@ public class ChatHistoryServiceImpl extends ServiceImpl<ChatHistoryMapper, ChatH
     private AppService appService;
 
 
+    /**
+     * 保存对话到mysql
+     * @param appId 应用id
+     * @param message 消息内容
+     * @param messageType 消息类型
+     * @param userId 用户id
+     * @return
+     */
     @Override
     public boolean addChatMessage(Long appId, String message, String messageType, Long userId) {
         ThrowUtils.throwIf(appId == null || appId <= 0, ErrorCode.PARAMS_ERROR, "应用ID不能为空");
@@ -87,6 +101,50 @@ public class ChatHistoryServiceImpl extends ServiceImpl<ChatHistoryMapper, ChatH
         return this.page(Page.of(1, pageSize), queryWrapper);
     }
 
+
+    /**
+     * 历史记忆加载到内存
+     * @param appId 应用ID
+     * @param chatMemory 聊天记忆窗口对象
+     * @param maxCount 最大加载条数
+     * @return 实际加载的聊天记录条数
+     */
+    @Override
+    public int loadChatHistoryMemory(Long appId, MessageWindowChatMemory chatMemory,int maxCount){
+        try {
+            //先去数据库查询数据
+            QueryWrapper queryWrapper = QueryWrapper.create()
+                    .eq("appId", appId)          // 按应用ID筛选
+                    .orderBy("createTime", false) // 按创建时间倒序排列
+                    .limit(1, maxCount);
+            List<ChatHistory> list = list(queryWrapper);
+            if (list.isEmpty()){
+                return 0;
+            }
+            //反转列表，确保按时间正序(老的在前新的在后)
+            list = list.reversed();
+            //按时间顺序添加到记忆中
+            int loadCount = 0;
+            //先清理历史缓存，防止重复加载
+            chatMemory.clear();
+            for (ChatHistory chatHistory : list) {
+                if(ChatHistoryMessageTypeEnum.USER.getValue().equals(chatHistory.getMessageType())){
+                    chatMemory.add(UserMessage.from(chatHistory.getMessage()));
+                    loadCount++;
+                }else if(ChatHistoryMessageTypeEnum.AI.getValue().equals(chatHistory.getMessageType())){
+
+                    chatMemory.add(AiMessage.from(chatHistory.getMessage()));
+                    loadCount++;
+                }
+            }
+            log.info("加载历史记忆成功，appId:{},加载条数：{}",appId,loadCount);
+            return loadCount;
+        } catch (Exception e) {
+            log.error("加载历史记忆失败，appId:{}",appId,e);
+            return 0;
+        }
+
+    }
 
 
 

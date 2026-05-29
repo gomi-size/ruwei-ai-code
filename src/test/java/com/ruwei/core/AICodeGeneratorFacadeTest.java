@@ -19,13 +19,13 @@ class AICodeGeneratorFacadeTest {
 
     @Test
     void generateAndSaveCode()  {
-        File file = aiCodeGeneratorFacade.generateAndSaveCode("登录页面，不能超过30行", CodeGenTypeEnum.MULTI_FILE);
+        File file = aiCodeGeneratorFacade.generateAndSaveCode("登录页面，不能超过30行", CodeGenTypeEnum.MULTI_FILE,1L);
         Assertions.assertNotNull(file);
     }
 
     @Test
     void generateAndSaveCodeStream() {
-        Flux<String> stringFlux = aiCodeGeneratorFacade.generateAndSaveCodeStream("登录页面，不能超过30行", CodeGenTypeEnum.MULTI_FILE);
+        Flux<String> stringFlux = aiCodeGeneratorFacade.generateAndSaveCodeStream("登录页面，不能超过30行", CodeGenTypeEnum.MULTI_FILE,2L);
         //阻塞所有数据等待
         List<String> result = stringFlux.collectList().block();
         //验证结果

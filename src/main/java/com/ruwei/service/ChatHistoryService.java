@@ -6,6 +6,7 @@ import com.mybatisflex.core.service.IService;
 import com.ruwei.model.dto.chathistory.ChatHistoryQueryRequest;
 import com.ruwei.model.entity.ChatHistory;
 import com.ruwei.model.entity.User;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 
 import java.time.LocalDateTime;
 
@@ -38,6 +39,16 @@ public interface ChatHistoryService extends IService<ChatHistory> {
     Page<ChatHistory> listAppChatHistoryByPage(Long appId, int pageSize,
                                                LocalDateTime lastCreateTime,
                                                User loginUser);
+
+    /**
+     * 加载对话记忆
+     * 从系统中加载指定应用ID的对话历史记录，并将其存储到消息窗口记忆对象中
+     * @param appId 应用的唯一标识符，用于区分不同应用的对话记忆
+     * @param chatMemory 记忆模型
+     * @param maxCount 最大的对话记录
+     * @return
+     */
+    int loadChatHistoryMemory(Long appId, MessageWindowChatMemory chatMemory, int maxCount);
 
     /**
      * 构造查询条件
