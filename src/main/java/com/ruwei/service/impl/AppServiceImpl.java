@@ -6,10 +6,12 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.db.handler.StringHandler;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.ruwei.constant.AppConstant;
 import com.ruwei.core.AICodeGeneratorFacade;
+import com.ruwei.core.handler.StreamHandlerExecutor;
 import com.ruwei.core.parser.CodeParserExecutor;
 import com.ruwei.core.saver.CodeFileSaverExecutor;
 import com.ruwei.exception.BusinessException;
@@ -51,6 +53,8 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
     private AICodeGeneratorFacade aiCodeGeneratorFacade;
     @Resource
     private ChatHistoryService chatHistoryService;
+    @Resource
+    private StreamHandlerExecutor streamHandlerExecutor;
 
 
     /**
@@ -82,27 +86,9 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
         //6.调用AI生成代码(流式，这里我们使用流式，不使用普通的)
         Flux<String> stringFlux = aiCodeGeneratorFacade.generateAndSaveCodeStream(message, enumByValue, appId);
 
-        StringBuilder aiStringBuilder = new StringBuilder();
-        //7.手机AI响应的内容，并且完成后保存记录到对话中
-       return stringFlux.map(chuck->{
-            //实时收集AI响应的内容
-            aiStringBuilder.append(chuck);
-            return chuck;
-        })
-        .doOnComplete(()->{
-            try {
-                //流式返回完成返回后，保存代码
-                String completeCode = aiStringBuilder.toString();
-               //保存AI对话记录
-                chatHistoryService.addChatMessage(appId,completeCode, ChatHistoryMessageTypeEnum.AI.getValue(),loginUser.getId());
 
-            } catch (Exception e) {
-                //错误也需要
-                String errorMessage="AI,回复失败"+e.getMessage();
-                chatHistoryService.addChatMessage(appId,errorMessage, ChatHistoryMessageTypeEnum.AI.getValue(),loginUser.getId());
-            }
-        });
-
+        //7.收集AI响应的内容，并且完成后保存记录到对话中
+       return streamHandlerExecutor.doExecute(stringFlux,chatHistoryService,appId,loginUser, enumByValue);
     }
 
     /**

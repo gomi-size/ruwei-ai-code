@@ -1,15 +1,22 @@
 package com.ruwei.core;
 
+import cn.hutool.json.JSONUtil;
 import com.ruwei.ai.AICodeGeneratorService;
 import com.ruwei.ai.AICodeGeneratorServiceFactory;
 import com.ruwei.ai.model.HtmlCodeResult;
 import com.ruwei.ai.model.MultiFileCodeResult;
+import com.ruwei.ai.model.message.AiResponseMessage;
+import com.ruwei.ai.model.message.ToolExecutedMessage;
+import com.ruwei.ai.model.message.ToolRequestMessage;
 import com.ruwei.core.parser.CodeParserExecutor;
 import com.ruwei.core.saver.CodeFileSaverExecutor;
 import com.ruwei.exception.BusinessException;
 import com.ruwei.exception.ErrorCode;
 import com.ruwei.exception.ThrowUtils;
 import com.ruwei.model.enums.CodeGenTypeEnum;
+import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.service.TokenStream;
+import dev.langchain4j.service.tool.ToolExecution;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,8 +89,8 @@ public class AICodeGeneratorFacade {
                yield  processCodeStream(stringFlux, CodeGenTypeEnum.MULTI_FILE,appId);
             }
             case VUE_PROJECT -> {
-                Flux<String> stringFlux = aiCodeGeneratorService.generateMultiFileCodeStream(userMessage);
-               yield  processCodeStream(stringFlux, CodeGenTypeEnum.VUE_PROJECT,appId);
+                TokenStream tokenStream = aiCodeGeneratorService.generateVueProjectCodeStream(appId, userMessage);
+                yield  processTokenStream(tokenStream);
             }
             default -> {
                 String errorMessage="不支持的生成类型："+codeGenType.getValue();
@@ -91,6 +98,39 @@ public class AICodeGeneratorFacade {
             }
         };
     }
+
+    /**
+     * 将 TokenStream 转换为 Flux<String>，并传递工具调用信息
+     *
+     * @param tokenStream TokenStream 对象
+     * @return Flux<String> 流式响应
+     */
+    private Flux<String> processTokenStream(TokenStream tokenStream) {
+        return Flux.create(sink -> {
+            tokenStream.onPartialResponse((String partialResponse) -> {
+                        AiResponseMessage aiResponseMessage = new AiResponseMessage(partialResponse);
+                        sink.next(JSONUtil.toJsonStr(aiResponseMessage));
+                    })
+                    .onPartialToolExecutionRequest((index, toolExecutionRequest) -> {
+                        ToolRequestMessage toolRequestMessage = new ToolRequestMessage(toolExecutionRequest);
+                        sink.next(JSONUtil.toJsonStr(toolRequestMessage));
+                    })
+                    .onToolExecuted((ToolExecution toolExecution) -> {
+                        ToolExecutedMessage toolExecutedMessage = new ToolExecutedMessage(toolExecution);
+                        sink.next(JSONUtil.toJsonStr(toolExecutedMessage));
+                    })
+                    .onCompleteResponse((ChatResponse response) -> {
+                        sink.complete();
+                    })
+                    .onError((Throwable error) -> {
+                        error.printStackTrace();
+                        sink.error(error);
+                    })
+                    .start();
+        });
+    }
+
+
     /**
      * 通用的流式处理
      * @param codeStream 文件流
