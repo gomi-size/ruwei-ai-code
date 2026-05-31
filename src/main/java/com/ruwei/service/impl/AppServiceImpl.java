@@ -3,17 +3,14 @@ package com.ruwei.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.db.handler.StringHandler;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.ruwei.constant.AppConstant;
 import com.ruwei.core.AICodeGeneratorFacade;
+import com.ruwei.core.builder.VueProjectBuilder;
 import com.ruwei.core.handler.StreamHandlerExecutor;
-import com.ruwei.core.parser.CodeParserExecutor;
-import com.ruwei.core.saver.CodeFileSaverExecutor;
 import com.ruwei.exception.BusinessException;
 import com.ruwei.exception.ErrorCode;
 import com.ruwei.exception.ThrowUtils;
@@ -27,6 +24,7 @@ import com.ruwei.model.vo.AppVO;
 import com.ruwei.model.vo.UserVO;
 import com.ruwei.service.AppService;
 import com.ruwei.service.ChatHistoryService;
+import com.ruwei.service.ScreenshotService;
 import com.ruwei.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +53,11 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
     private ChatHistoryService chatHistoryService;
     @Resource
     private StreamHandlerExecutor streamHandlerExecutor;
+    @Resource
+    private VueProjectBuilder vueProjectBuilder;
+
+    @Resource
+    private ScreenshotService screenshotService;
 
 
     /**
@@ -83,11 +86,12 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
 
         //5.在ai前先保存，先保存用户消息
         chatHistoryService.addChatMessage(appId,message, ChatHistoryMessageTypeEnum.USER.getValue(),loginUser.getId());
+
         //6.调用AI生成代码(流式，这里我们使用流式，不使用普通的)
         Flux<String> stringFlux = aiCodeGeneratorFacade.generateAndSaveCodeStream(message, enumByValue, appId);
 
 
-        //7.收集AI响应的内容，并且完成后保存记录到对话中
+        //7.收集AI响应的内容，并且完成后保存记录到对话中(这里进行了处理，可以分别处理原版的文件格式和Vue文件格式)
        return streamHandlerExecutor.doExecute(stringFlux,chatHistoryService,appId,loginUser, enumByValue);
     }
 
@@ -126,9 +130,25 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
 
         //6.检查路径是否存在
         File sourceDir = new File(sourceDirPath);
-        ThrowUtils.throwIf(!sourceDir.exists()||!sourceDir.isDirectory(),ErrorCode.SYSTEM_ERROR,"代码路径不存在，请先生成应用");
+        ThrowUtils.throwIf(!sourceDir.exists()||!sourceDir.isDirectory(),ErrorCode.SYSTEM_ERROR,
+                "代码路径不存在，请先生成应用");
+        //7.Vue 项目特殊处理构造
+        CodeGenTypeEnum enumByValue = CodeGenTypeEnum.getEnumByValue(codeGenType);
+        if(enumByValue==CodeGenTypeEnum.VUE_PROJECT){
+            //构建Vue项目，这里是同步执行
+            boolean result = vueProjectBuilder.buildProject(sourceDirPath);
+            ThrowUtils.throwIf(!result,ErrorCode.SYSTEM_ERROR,"Vue项目构建失败，请重试");
 
-        //7.复制文件道部署目录
+            //检查dist目录是否存在
+            File distDir = new File(sourceDirPath, "dist");
+            ThrowUtils.throwIf(!distDir.exists(),ErrorCode.SYSTEM_ERROR,"Vue项目构建完成但未生成dist目录");
+            //构建完成后，进行部署
+            sourceDir=distDir;
+
+        }
+
+
+        //8.复制文件道部署目录
         String deployDirPath = AppConstant.CODE_DEPLOY_ROOT_DIR + File.separator + deployKey;
 
         try {
@@ -138,7 +158,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"应用部署失败"+e.getMessage());
         }
 
-        //8.更新数据库
+        //9.更新数据库
         App upadeApp = new App();
         upadeApp.setId(appId);
         upadeApp.setDeployKey(deployKey);
@@ -146,9 +166,35 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
         boolean updated = updateById(upadeApp);
         ThrowUtils.throwIf(!updated,ErrorCode.SYSTEM_ERROR,"更新应用部署失败");
 
-        //9.返回可访问的URL地址
-        return String.format("%s/%s/",AppConstant.CODE_DEPLOY_HOST,deployKey);
+        //10.返回可访问的URL地址
+        String appDeployUrl = String.format("%s/%s/", AppConstant.CODE_DEPLOY_HOST, deployKey);
+        //11.异步异步生成截图并且更新应用封面
+        generateAppScreenshotAsync(appId,appDeployUrl);
+        return appDeployUrl;
     }
+
+    /**
+     * 异步生成截图服务并更新封面
+     * @param appId
+     * @param appDeployUrl
+     */
+    @Override
+    public void generateAppScreenshotAsync(Long appId, String appDeployUrl) {
+        //启用虚拟线程并执行
+        Thread.startVirtualThread(()->{
+                //调用截图服务生成截图并上传
+                String screenshotUrl = screenshotService.generateAndUploadScreenshot(appDeployUrl);
+                App app = new App();
+                app.setId(appId);
+                app.setCover(screenshotUrl);
+                boolean updated = updateById(app);
+                ThrowUtils.throwIf(!updated,ErrorCode.OPERATION_ERROR,"更新应用封面字段失败");
+            });
+    }
+
+
+
+
 
 
     /**
