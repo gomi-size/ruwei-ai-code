@@ -11,5 +11,5 @@ public interface ScreenshotService {
      * @param url
      * @return
      */
-    String generateAndUploadScreenshot( String url,);
+    String generateAndUploadScreenshot( String url);
 }
