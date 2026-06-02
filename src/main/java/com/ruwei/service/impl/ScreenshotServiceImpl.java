@@ -24,11 +24,6 @@ public class ScreenshotServiceImpl implements ScreenshotService {
     @Resource
     private CosManager cosManager;
 
-
-
-
-
-
     @Override
     public String generateAndUploadScreenshot(String url) {
         //1.校验参数

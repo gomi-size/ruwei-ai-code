@@ -52,15 +52,15 @@ public class AICodeGeneratorServiceFactory {
                 log.debug("AI服务实例被移除，缓存键:{},原因：{}",key, cause);
             }).build();
 
-    /**
+/*    *//**
      * 根据appid获取服务(兼容老方法)
      * @param appId
      * @return
-     */
+     *//*
     public AICodeGeneratorService getAICodeGeneratorService(Long appId) {
         //根据appId构建独立的对话记忆
         return getAICodeGeneratorService(appId, CodeGenTypeEnum.MULTI_FILE);
-    }
+    }*/
     /**
      * 根据appid获取服务
      * @param appId

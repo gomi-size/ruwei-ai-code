@@ -2,10 +2,12 @@ package com.ruwei.service;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.service.IService;
+import com.ruwei.model.dto.app.AppAddRequest;
 import com.ruwei.model.dto.app.AppQueryRequest;
 import com.ruwei.model.entity.App;
 import com.ruwei.model.entity.User;
 import com.ruwei.model.vo.AppVO;
+import jakarta.servlet.http.HttpServletRequest;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -43,6 +45,8 @@ public interface AppService extends IService<App> {
      * @return
      */
     List<AppVO> getAppVOList(List<App> appList);
+
+    Long addApp(AppAddRequest appAddRequest, HttpServletRequest request);
 
     /**
      * 通过对话生成代码应用
