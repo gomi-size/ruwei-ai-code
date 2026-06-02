@@ -6,16 +6,16 @@
 
     <resultMap id="BaseResultMap" type="com.ruwei.model.entity.User">
         <id property="id" column="id"/>
-        <result property="useraccount" column="userAccount"/>
-        <result property="userpassword" column="userPassword"/>
-        <result property="username" column="userName"/>
-        <result property="useravatar" column="userAvatar"/>
-        <result property="userprofile" column="userProfile"/>
-        <result property="userrole" column="userRole"/>
-        <result property="edittime" column="editTime"/>
-        <result property="createtime" column="createTime"/>
-        <result property="updatetime" column="updateTime"/>
-        <result property="isdelete" column="isDelete"/>
+        <result property="userAccount" column="userAccount"/>
+        <result property="userPassword" column="userPassword"/>
+        <result property="userName" column="userName"/>
+        <result property="userAvatar" column="userAvatar"/>
+        <result property="userProfile" column="userProfile"/>
+        <result property="userRole" column="userRole"/>
+        <result property="editTime" column="editTime"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="isDelete" column="isDelete"/>
     </resultMap>
 
     <sql id="Base_Column_List">
