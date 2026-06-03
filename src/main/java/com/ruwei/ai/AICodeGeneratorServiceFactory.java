@@ -2,7 +2,7 @@ package com.ruwei.ai;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.ruwei.ai.tools.FileWriteTool;
+import com.ruwei.ai.tools.*;
 import com.ruwei.exception.BusinessException;
 import com.ruwei.exception.ErrorCode;
 import com.ruwei.model.enums.CodeGenTypeEnum;
@@ -40,6 +40,8 @@ public class AICodeGeneratorServiceFactory {
 
     @Resource
     private ChatHistoryService chatHistoryService;
+    @Resource
+    private ToolManager toolManager;
 
     /**
      * AI服务实例缓存
@@ -96,7 +98,7 @@ public class AICodeGeneratorServiceFactory {
                     .streamingChatModel(reasoningStreamingChatModel)
                     // 根据 id 构建独立的对话记忆
                     .chatMemoryProvider(memory->chatMemory)
-                    .tools(new FileWriteTool())
+                    .tools(toolManager.getAllTools())
                     //处理工具幻觉问题
                     .hallucinatedToolNameStrategy(toolExecutionRequest ->
                             ToolExecutionResultMessage.from(toolExecutionRequest,

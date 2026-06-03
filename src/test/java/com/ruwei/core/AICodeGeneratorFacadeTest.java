@@ -17,11 +17,11 @@ class AICodeGeneratorFacadeTest {
     @Resource
     private AICodeGeneratorFacade aiCodeGeneratorFacade;
 
-    @Test
+/*    @Test
     void generateAndSaveCode()  {
         File file = aiCodeGeneratorFacade.generateAndSaveCode("登录页面，不能超过30行", CodeGenTypeEnum.MULTI_FILE,1L);
         Assertions.assertNotNull(file);
-    }
+    }*/
 
     @Test
     void generateAndSaveCodeStream() {

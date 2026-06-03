@@ -37,12 +37,13 @@ public class AICodeGeneratorFacade {
     private AICodeGeneratorServiceFactory aiCodeGeneratorServiceFactory;
 
     /**
-     * 统一入口：根据类型生成并保存代码
+     * 统一入口：根据类型生成并保存代码(弃用，下面的方法兼容所有格式)
      * @param userMessage 用户prompt
      * @param codeGenType 生成类型
      * @return 生成好的文件
      * @throws Exception
      */
+    @Deprecated
     public File generateAndSaveCode(String userMessage, CodeGenTypeEnum codeGenType,Long appId)  {
         ThrowUtils.throwIf(codeGenType==null, ErrorCode.PARAMS_ERROR,"生成类型不能为空");
         //根据appId获取相应的ai实例
@@ -89,6 +90,7 @@ public class AICodeGeneratorFacade {
                yield  processCodeStream(stringFlux, CodeGenTypeEnum.MULTI_FILE,appId);
             }
             case VUE_PROJECT -> {
+                //还是调用对应的service去生成代码
                 TokenStream tokenStream = aiCodeGeneratorService.generateVueProjectCodeStream(appId, userMessage);
                 yield  processTokenStream(tokenStream);
             }
