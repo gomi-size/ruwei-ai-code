@@ -18,6 +18,7 @@ import static org.bsc.langgraph4j.action.AsyncNodeAction.node_async;
 /**
  * 简化版网站生成工作流应用 - 使用 MessagesState
  */
+@Deprecated
 @Slf4j
 public class SimpleWorkflowApp {
 

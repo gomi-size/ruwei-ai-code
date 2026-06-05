@@ -18,6 +18,7 @@ import static org.bsc.langgraph4j.StateGraph.START;
 /**
  * 模拟工作流
  */
+@Deprecated
 @Slf4j
 public class WorkflowApp {
 

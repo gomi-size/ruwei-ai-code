@@ -1,6 +1,7 @@
 package com.ruwei.langgraph.state;
 
 import com.ruwei.langgraph.model.ImageResource;
+import com.ruwei.langgraph.model.QualityResult;
 import com.ruwei.model.enums.CodeGenTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,6 +43,10 @@ public class WorkflowContext implements Serializable {
      * 图片资源字符串
      */
     private String imageListStr;
+    /**
+     * 质量检查结果
+     */
+    private QualityResult qualityResult;
 
     /**
      * 图片资源列表
