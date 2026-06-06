@@ -3,10 +3,7 @@ spring:
   application:
     admin: ruwei-ai-code-backend
     # session 配置
-  session:
-    store-type: redis
-      # session 30 天过期
-    timeout: 2592000
+
   # mysql
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -22,6 +19,10 @@ spring:
       port: 6379
       ttl: 3600
       database: 0
+  session:
+    store-type: redis
+      # session 30 天过期
+    timeout: 2592000
 
 server:
   port: 8123

@@ -2,10 +2,12 @@ package com.ruwei.common;
 
 import com.ruwei.exception.ErrorCode;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+
 public class BaseResponse<T> implements Serializable {
 
     private int code;
