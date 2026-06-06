@@ -7,6 +7,7 @@ import com.ruwei.exception.BusinessException;
 import com.ruwei.exception.ErrorCode;
 import com.ruwei.model.enums.CodeGenTypeEnum;
 import com.ruwei.service.ChatHistoryService;
+import com.ruwei.utils.SpringContextUtil;
 import dev.langchain4j.community.store.memory.chat.redis.RedisChatMemoryStore;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
@@ -26,14 +27,8 @@ import java.time.Duration;
 @Configuration
 public class AICodeGeneratorServiceFactory {
 
-    @Resource
+    @Resource(name = "openAiChatModel")
     private ChatModel chatModel;
-
-    @Resource
-    private StreamingChatModel openAiStreamingChatModel;
-
-    @Resource
-    private StreamingChatModel reasoningStreamingChatModel;
 
     @Resource
     private RedisChatMemoryStore redisChatMemoryStore;
@@ -93,24 +88,32 @@ public class AICodeGeneratorServiceFactory {
         chatHistoryService.loadChatHistoryMemory(appId, chatMemory,20);
         return switch (codeGenTypeEnum){
             //Vue项目生成就使用工具调用和项目推理
-            case VUE_PROJECT -> AiServices.builder(AICodeGeneratorService.class)
-                    .chatModel(chatModel)
-                    .streamingChatModel(reasoningStreamingChatModel)
-                    // 根据 id 构建独立的对话记忆
-                    .chatMemoryProvider(memory->chatMemory)
-                    .tools(toolManager.getAllTools())
-                    //处理工具幻觉问题
-                    .hallucinatedToolNameStrategy(toolExecutionRequest ->
-                            ToolExecutionResultMessage.from(toolExecutionRequest,
-                                    "Error :there is no tool called"+toolExecutionRequest.name()))
-                    .build();
+            case VUE_PROJECT -> {
+                //使用多例模式的SteamChat Model解决并发问题
+                StreamingChatModel reasoningStreamingChatModel = SpringContextUtil.getBean("reasoningStreamingChatModelPrototype", StreamingChatModel.class);
+                yield AiServices.builder(AICodeGeneratorService.class)
+                        .chatModel(chatModel)
+                        .streamingChatModel(reasoningStreamingChatModel)
+                        // 根据 id 构建独立的对话记忆
+                        .chatMemoryProvider(memory -> chatMemory)
+                        .tools(toolManager.getAllTools())
+                        //处理工具幻觉问题
+                        .hallucinatedToolNameStrategy(toolExecutionRequest ->
+                                ToolExecutionResultMessage.from(toolExecutionRequest,
+                                        "Error :there is no tool called" + toolExecutionRequest.name()))
+                        .build();
+            }
             //普通的就是HTML和多文件生成，使用流式对话模型
-            case HTML ,MULTI_FILE->AiServices.builder(AICodeGeneratorService.class)
-                    .chatModel(chatModel)
-                    .streamingChatModel(openAiStreamingChatModel)
-                    // 根据 id 构建独立的对话记忆
-                    .chatMemory(chatMemory)
-                    .build();
+            case HTML ,MULTI_FILE-> {
+                //使用多例模式的SteamChat Model解决并发问题
+                StreamingChatModel streamingChatModel = SpringContextUtil.getBean("streamingChatModelPrototype", StreamingChatModel.class);
+                yield  AiServices.builder(AICodeGeneratorService.class)
+                        .chatModel(chatModel)
+                        .streamingChatModel(streamingChatModel)
+                        // 根据 id 构建独立的对话记忆
+                        .chatMemory(chatMemory)
+                        .build();
+            }
             default -> throw new BusinessException(ErrorCode.SYSTEM_ERROR,"不支持的代码生成类型");
         };
 

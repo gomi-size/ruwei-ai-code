@@ -8,6 +8,7 @@ import cn.hutool.core.util.StrUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import com.ruwei.ai.AiCodeGenTypeRoutingService;
+import com.ruwei.ai.AiCodeGenTypeRoutingServiceFactory;
 import com.ruwei.constant.AppConstant;
 import com.ruwei.core.AICodeGeneratorFacade;
 import com.ruwei.core.builder.VueProjectBuilder;
@@ -62,7 +63,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
     @Resource
     private ScreenshotService screenshotService;
     @Resource
-    private AiCodeGenTypeRoutingService aiCodeGenTypeRoutingService;
+    private AiCodeGenTypeRoutingServiceFactory aiCodeGenTypeRoutingServiceFactory;
 
 
     /**
@@ -76,17 +77,23 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
         // 参数校验
         String initPrompt = appAddRequest.getInitPrompt();
         ThrowUtils.throwIf(StrUtil.isBlank(initPrompt), ErrorCode.PARAMS_ERROR, "初始化 prompt 不能为空");
+
         // 获取当前登录用户
         User loginUser = userService.getLoginUser(request);
+
         // 构造入库对象
         App app = new App();
         BeanUtil.copyProperties(appAddRequest, app);
         app.setUserId(loginUser.getId());
+
         // 应用名称暂时为 initPrompt 前 12 位
         app.setAppName(initPrompt.substring(0, Math.min(initPrompt.length(), 12)));
-        // 根据ai只能选择代码生成类型
+
+        // 根据ai只能选择代码生成类型(多例模式)
+        AiCodeGenTypeRoutingService aiCodeGenTypeRoutingService = aiCodeGenTypeRoutingServiceFactory.CreateAiCodeGenTypeRoutingService();
         CodeGenTypeEnum codeGenTypeEnum = aiCodeGenTypeRoutingService.routeCodeType(initPrompt);
         app.setCodeGenType(codeGenTypeEnum.getValue());
+
         // 插入数据库
         boolean result = save(app);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);

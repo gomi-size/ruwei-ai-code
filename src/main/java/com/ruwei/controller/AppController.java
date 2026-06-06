@@ -50,10 +50,6 @@ public class AppController {
     private AppService appService;
     @Resource
     private UserService userService;
-    @Resource
-    private ProjectDownLoadService projectDownLoadService;
-    @Resource
-    private AiCodeGenTypeRoutingService aiCodeGenTypeRoutingService;
 
 
     /**
