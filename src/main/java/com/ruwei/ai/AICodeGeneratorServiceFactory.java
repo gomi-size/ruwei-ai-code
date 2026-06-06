@@ -2,6 +2,8 @@ package com.ruwei.ai;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.ruwei.ai.guardrail.PromptSafetyInputGuardrail;
+import com.ruwei.ai.guardrail.RetryOutputGuardrail;
 import com.ruwei.ai.tools.*;
 import com.ruwei.exception.BusinessException;
 import com.ruwei.exception.ErrorCode;
@@ -101,6 +103,10 @@ public class AICodeGeneratorServiceFactory {
                         .hallucinatedToolNameStrategy(toolExecutionRequest ->
                                 ToolExecutionResultMessage.from(toolExecutionRequest,
                                         "Error :there is no tool called" + toolExecutionRequest.name()))
+                        .inputGuardrails(new PromptSafetyInputGuardrail())//添加护轨
+/*
+                        .outputGuardrails(new RetryOutputGuardrail())//添加输出护轨，为了流式输出，这里不使用
+*/
                         .build();
             }
             //普通的就是HTML和多文件生成，使用流式对话模型
@@ -112,6 +118,11 @@ public class AICodeGeneratorServiceFactory {
                         .streamingChatModel(streamingChatModel)
                         // 根据 id 构建独立的对话记忆
                         .chatMemory(chatMemory)
+                        .inputGuardrails(new PromptSafetyInputGuardrail())//添加护轨
+                        .maxSequentialToolsInvocations(20)
+/*
+                        .outputGuardrails(new RetryOutputGuardrail())//添加输出护轨，为了流式输出，这里不使用
+*/
                         .build();
             }
             default -> throw new BusinessException(ErrorCode.SYSTEM_ERROR,"不支持的代码生成类型");
