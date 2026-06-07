@@ -9,7 +9,7 @@ spring:
   # mysql
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ruwei_ai_code
+    url: jdbc:mysql://localhost:3306/ai_code
     username: root
     password: 123456
   # redis
@@ -29,6 +29,19 @@ server:
     session:
       cookie:
         max-age: 2592000
+  # Dubbo
+dubbo:
+    registry:
+      address: nacos://127.0.0.1:8848?username=nacos&password=nacos
+      register-mode: instance
+    protocol:
+      name: tri
+      port: 50051
+    consumer:
+      timeout: 60000
+    provider:
+      timeout: 60000
+
 # springdoc-openapi
 springdoc:
   group-configs:

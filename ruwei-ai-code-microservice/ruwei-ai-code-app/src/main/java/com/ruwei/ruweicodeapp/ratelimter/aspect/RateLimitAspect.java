@@ -2,12 +2,13 @@ package com.ruwei.ruweicodeapp.ratelimter.aspect;
 
 import com.ruwei.exception.BusinessException;
 import com.ruwei.exception.ErrorCode;
+import com.ruwei.innerservice.InnerUserService;
 import com.ruwei.model.entity.User;
-import com.ruwei.ratelimter.annotation.RateLimit;
-import com.ruwei.service.UserService;
+import com.ruwei.ruweicodeapp.ratelimter.annotation.RateLimit;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.javassist.runtime.Inner;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -34,7 +35,7 @@ public class RateLimitAspect {
     private RedissonClient redissonClient;
 
     @Resource
-    private UserService userService;
+    private InnerUserService userService;
 
     @Before("@annotation(rateLimit)")
     public void doBefore(JoinPoint joinPoint, RateLimit rateLimit) {
@@ -74,7 +75,7 @@ public class RateLimitAspect {
                     ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
                     if (attributes != null) {
                         HttpServletRequest request = attributes.getRequest();
-                        User loginUser = userService.getLoginUser(request);
+                        User loginUser = InnerUserService.getLoginUser(request);
                         keyBuilder.append("user:").append(loginUser.getId());
                     } else {
                         // 无法获取请求上下文，使用IP限流

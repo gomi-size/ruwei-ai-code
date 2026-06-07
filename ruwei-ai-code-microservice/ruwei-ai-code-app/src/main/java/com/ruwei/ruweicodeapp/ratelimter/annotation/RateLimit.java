@@ -1,6 +1,5 @@
 package com.ruwei.ruweicodeapp.ratelimter.annotation;
 
-import com.ruwei.ratelimter.enums.RateLimitType;
 import com.ruwei.ruweicodeapp.ratelimter.enums.RateLimitType;
 
 import java.lang.annotation.ElementType;
@@ -30,7 +29,7 @@ public @interface RateLimit {
     /**
      * 限流类型
      */
-    RateLimitType limitType() default;
+    RateLimitType limitType() default RateLimitType.USER;
     
     /**
      * 限流提示信息

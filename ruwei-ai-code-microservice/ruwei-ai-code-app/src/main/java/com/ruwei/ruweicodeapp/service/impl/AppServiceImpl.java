@@ -12,6 +12,7 @@ import com.ruwei.constant.AppConstant;
 import com.ruwei.exception.BusinessException;
 import com.ruwei.exception.ErrorCode;
 import com.ruwei.exception.ThrowUtils;
+import com.ruwei.innerservice.InnerScreenshotService;
 import com.ruwei.innerservice.InnerUserService;
 import com.ruwei.model.dto.app.AppAddRequest;
 import com.ruwei.model.dto.app.AppQueryRequest;
@@ -31,6 +32,7 @@ import com.ruwei.ruweicodeapp.service.ChatHistoryService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -49,8 +51,7 @@ import java.util.stream.Collectors;
 @Service
 public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppService {
 
-    @Resource
-    @Lazy
+    @DubboReference
     private InnerUserService userService;
     @Resource
     private AICodeGeneratorFacade aiCodeGeneratorFacade;
@@ -61,9 +62,9 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App> implements AppSe
     @Resource
     private VueProjectBuilder vueProjectBuilder;
 
-    @Resource
-    @Lazy
+    @DubboReference
     private InnerScreenshotService screenshotService;
+
     @Resource
     private AiCodeGenTypeRoutingServiceFactory aiCodeGenTypeRoutingServiceFactory;
 
