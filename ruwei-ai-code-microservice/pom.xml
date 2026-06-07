@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>rruwei-ai-code-common</module>
+        <module>ruwei-ai-code-common</module>
         <module>ruwei-ai-code-model</module>
         <module>ruwei-ai-code-client</module>
         <module>ruwei-ai-code-user</module>

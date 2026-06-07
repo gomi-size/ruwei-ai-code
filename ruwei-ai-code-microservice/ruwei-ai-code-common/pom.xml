@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>rruwei-ai-code-common</artifactId>
+    <artifactId>ruwei-ai-code-common</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
