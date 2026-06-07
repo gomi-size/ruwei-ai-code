@@ -90,7 +90,7 @@ public class AppServiceImpl extends ServiceImpl<AppMapper, App>  implements AppS
         app.setAppName(initPrompt.substring(0, Math.min(initPrompt.length(), 12)));
 
         // 根据ai只能选择代码生成类型(多例模式)
-        AiCodeGenTypeRoutingService aiCodeGenTypeRoutingService = aiCodeGenTypeRoutingServiceFactory.CreateAiCodeGenTypeRoutingService();
+        AiCodeGenTypeRoutingService aiCodeGenTypeRoutingService = aiCodeGenTypeRoutingServiceFactory.createAiCodeGenTypeRoutingService();
         CodeGenTypeEnum codeGenTypeEnum = aiCodeGenTypeRoutingService.routeCodeType(initPrompt);
         app.setCodeGenType(codeGenTypeEnum.getValue());
 

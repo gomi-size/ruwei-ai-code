@@ -37,6 +37,7 @@ public class AICodeGeneratorServiceFactory {
 
     @Resource
     private ChatHistoryService chatHistoryService;
+
     @Resource
     private ToolManager toolManager;
 
@@ -51,15 +52,6 @@ public class AICodeGeneratorServiceFactory {
                 log.debug("AI服务实例被移除，缓存键:{},原因：{}",key, cause);
             }).build();
 
-/*    *//**
-     * 根据appid获取服务(兼容老方法)
-     * @param appId
-     * @return
-     *//*
-    public AICodeGeneratorService getAICodeGeneratorService(Long appId) {
-        //根据appId构建独立的对话记忆
-        return getAICodeGeneratorService(appId, CodeGenTypeEnum.MULTI_FILE);
-    }*/
     /**
      * 根据appid获取服务
      * @param appId
@@ -93,6 +85,7 @@ public class AICodeGeneratorServiceFactory {
             case VUE_PROJECT -> {
                 //使用多例模式的SteamChat Model解决并发问题
                 StreamingChatModel reasoningStreamingChatModel = SpringContextUtil.getBean("reasoningStreamingChatModelPrototype", StreamingChatModel.class);
+
                 yield AiServices.builder(AICodeGeneratorService.class)
                         .chatModel(chatModel)
                         .streamingChatModel(reasoningStreamingChatModel)
@@ -113,6 +106,7 @@ public class AICodeGeneratorServiceFactory {
             case HTML ,MULTI_FILE-> {
                 //使用多例模式的SteamChat Model解决并发问题
                 StreamingChatModel streamingChatModel = SpringContextUtil.getBean("streamingChatModelPrototype", StreamingChatModel.class);
+
                 yield  AiServices.builder(AICodeGeneratorService.class)
                         .chatModel(chatModel)
                         .streamingChatModel(streamingChatModel)
