@@ -1,4 +1,4 @@
-package com.ruwei.service;
+package com.ruweiuser.service;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.service.IService;

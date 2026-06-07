@@ -1,4 +1,4 @@
-package com.ruwei.service.impl;
+package com.ruweiuser.service.Impl;
 
 
 import cn.hutool.core.bean.BeanUtil;
@@ -14,8 +14,8 @@ import com.ruwei.model.entity.User;
 import com.ruwei.model.enums.UserRoleEnum;
 import com.ruwei.model.vo.LoginUserVO;
 import com.ruwei.model.vo.UserVO;
-import com.ruwei.service.UserService;
-import com.ruwei.mapper.UserMapper;
+import com.ruweiuser.service.UserService;
+import com.ruweiuser.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
