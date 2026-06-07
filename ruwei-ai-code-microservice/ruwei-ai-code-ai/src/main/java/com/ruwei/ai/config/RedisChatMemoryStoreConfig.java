@@ -1,4 +1,4 @@
-package com.ruwei.config;
+package com.ruwei.ai.config;
 
 import dev.langchain4j.community.store.memory.chat.redis.RedisChatMemoryStore;
 import lombok.Data;

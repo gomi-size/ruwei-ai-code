@@ -1,4 +1,4 @@
-package dev.langchain4j.service;
+package langchain4j.service;
 
 import dev.langchain4j.Internal;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;

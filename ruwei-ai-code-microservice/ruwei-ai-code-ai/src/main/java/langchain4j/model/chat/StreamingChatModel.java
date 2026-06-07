@@ -1,4 +1,4 @@
-package dev.langchain4j.model.chat;
+package langchain4j.model.chat;
 
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.data.message.ChatMessage;

@@ -1,4 +1,4 @@
-package com.ruwei.config;
+package com.ruwei.ai.config;
 
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;

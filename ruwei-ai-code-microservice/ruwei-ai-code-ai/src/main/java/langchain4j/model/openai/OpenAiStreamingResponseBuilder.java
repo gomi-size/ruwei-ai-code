@@ -1,4 +1,4 @@
-package dev.langchain4j.model.openai;
+package langchain4j.model.openai;
 
 import dev.langchain4j.Internal;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
