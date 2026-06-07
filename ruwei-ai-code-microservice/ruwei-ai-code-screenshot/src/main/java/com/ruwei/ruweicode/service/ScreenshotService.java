@@ -1,4 +1,4 @@
-package com.ruwei.service;
+package com.ruwei.ruweicode.service;
 
 import org.springframework.stereotype.Service;
 

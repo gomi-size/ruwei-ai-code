@@ -1,14 +1,13 @@
-package com.ruwei.service.impl;
+package com.ruwei.ruweicode.service.impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.core.util.URLUtil;
 import com.ruwei.exception.ErrorCode;
 import com.ruwei.exception.ThrowUtils;
 import com.ruwei.manager.CosManager;
-import com.ruwei.service.ScreenshotService;
-import com.ruwei.utils.WebScreenshotUtils;
+import com.ruwei.ruweicode.service.ScreenshotService;
+import com.ruwei.ruweicode.utils.WebScreenshotUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

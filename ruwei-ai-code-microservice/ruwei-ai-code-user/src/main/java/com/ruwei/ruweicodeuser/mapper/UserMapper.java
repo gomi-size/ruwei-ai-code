@@ -1,4 +1,4 @@
-package com.ruweiuser.mapper;
+package com.ruwei.ruweicodeuser.mapper;
 
 import com.mybatisflex.core.BaseMapper;
 import com.ruwei.model.entity.User;

@@ -1,4 +1,4 @@
-package com.ruweiuser.controller;
+package com.ruwei.ruweicodeuser.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.mybatisflex.core.paginate.Page;
@@ -14,7 +14,7 @@ import com.ruwei.model.dto.user.*;
 import com.ruwei.model.entity.User;
 import com.ruwei.model.vo.LoginUserVO;
 import com.ruwei.model.vo.UserVO;
-import com.ruweiuser.service.UserService;
+import com.ruwei.ruweicodeuser.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;

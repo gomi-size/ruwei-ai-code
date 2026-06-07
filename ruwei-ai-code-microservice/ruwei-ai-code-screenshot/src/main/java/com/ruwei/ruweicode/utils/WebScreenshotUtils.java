@@ -1,4 +1,4 @@
-package com.ruwei.utils;
+package com.ruwei.ruweicode.utils;
 
 import cn.hutool.core.img.ImgUtil;
 import cn.hutool.core.io.FileUtil;

@@ -1,4 +1,4 @@
-package com.ruweiuser.aop;
+package com.ruwei.ruweicodeuser.aop;
 
 
 
@@ -7,7 +7,7 @@ import com.ruwei.exception.BusinessException;
 import com.ruwei.exception.ErrorCode;
 import com.ruwei.model.entity.User;
 import com.ruwei.model.enums.UserRoleEnum;
-import com.ruweiuser.service.UserService;
+import com.ruwei.ruweicodeuser.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
