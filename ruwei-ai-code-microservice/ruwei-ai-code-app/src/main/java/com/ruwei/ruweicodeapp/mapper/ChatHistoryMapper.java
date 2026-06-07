@@ -1,0 +1,13 @@
+package com.ruwei.ruweicodeapp.mapper;
+
+import com.mybatisflex.core.BaseMapper;
+import com.ruwei.model.entity.ChatHistory;
+
+/**
+ * 对话历史 映射层。
+ *
+ * @author <a href="https://github.com/gomi-size">入围</a>
+ */
+public interface ChatHistoryMapper extends BaseMapper<ChatHistory> {
+
+}
