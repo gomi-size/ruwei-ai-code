@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: ruwei-ai-code-app
+  # session
+  session:
+    store-type: redis
+    # 30 days expire
+    timeout: 2592000
+  # mysql
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ai_code
+    username: root
+    password: 123456
+  profiles:
+    active: local
+  # redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      password:
+      ttl: 3600
+  autoconfigure:
+    exclude: dev.langchain4j.community.store.embedding.redis.spring.RedisEmbeddingStoreAutoConfiguration
+server:
+  port: 8125
+  servlet:
+    context-path: /api
+    # 30 days expire
+    session:
+      cookie:
+        max-age: 2592000
+# springdoc-openapi
+springdoc:
+  group-configs:
+    - group: 'default'
+      packages-to-scan: com.yupi.yuaicodemother.controller
+# knife4j
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+# Dubbo
+dubbo:
+  registry:
+    address: nacos://127.0.0.1:8848?username=nacos&password=nacos
+    register-mode: instance
+  protocol:
+    name: tri
+    port: 50053
+  consumer:
+    timeout: 120000
+  provider:
+    timeout: 120000
